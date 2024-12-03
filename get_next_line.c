@@ -9,10 +9,10 @@
 /*   Updated: 2024/12/02 17:23:03 by esteudle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "get_next_line.h"
 
-int	main(void)
-{
-	int	a;
-
-	a = 10;
+char	*get_next_line(int fd)
+{	
+	if (fd < 0 || read (fd, NULL, 0) < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
 }
