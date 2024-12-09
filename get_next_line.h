@@ -13,7 +13,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 3
+#  define BUFFER_SIZE 28
 # endif
 
 #include <unistd.h>
@@ -22,5 +22,6 @@
 #include <fcntl.h>
 
 char	*get_next_line(int fd);
+void	*ft_calloc(size_t nmemb, size_t size);
 
 #endif

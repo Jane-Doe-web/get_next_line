@@ -8,9 +8,8 @@ int	main()
 		printf("Failed to open the file");
 		return (1);
 	}
-	get_next_line(fd);
-	get_next_line(fd);
-	get_next_line(fd);
+	printf ("%s", get_next_line(fd));
+	
 	close (fd);
 	return (0);
 }

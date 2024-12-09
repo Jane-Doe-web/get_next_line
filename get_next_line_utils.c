@@ -10,4 +10,23 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
+#include "stdlib.h"
 
+void	*ft_calloc(size_t nmemb, size_t size)
+{
+	unsigned char	*ptr;
+	size_t			total_size;
+	size_t			i;
+
+	total_size = nmemb * size;
+	ptr = malloc(total_size);
+	if (!ptr)
+		return (NULL);
+	i = 0;
+	while (i < total_size)
+	{
+		ptr[i] = 0;
+		i++;
+	}
+	return (ptr);
+}
