@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
+#include <stdlib.h>
 
-char	*ft_strchr(char *buffer)
+char	*ft_strchr(char *container)
 {
 	int	i;
 
@@ -25,18 +26,19 @@ char	*ft_strchr(char *buffer)
 	return (NULL);
 }
 
-char	*extracting_line (char *buffer)
+char	*extracting_line (char *container)
 {
 	char	*line;
 	int	j;
 	int	i;
 
 	i = 0;
-	j = 0;
-	line = ft_calloc((BUFFER_SIZE - &buffer) + 1, sizeof(char));
+	while (container[i] != '\n')
+		i++;
+	line = malloc(i + 2);
 	if (!line)
 		return (NULL);
-	while (buffer[i])
+	while (buffer[i]) //create strndup or substring
 	{
 		line[i + j] = buffer[j];
 		j++;
@@ -49,28 +51,25 @@ char	*get_next_line(int fd)
 	static int	bytes_read;
 	char	*line;
 	char	*buffer;
-	int	i;
-	char	*ptr;
+	static char	*container;
 
 	line = NULL;	
 	if (fd < 0 || read (fd, NULL, 0) != 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	buffer = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	if (!buffer)
+	buffer = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char)); //allocate memory to the initial buffer
+	if (!buffer)   //malloc protection
 		return (NULL);
-	while (1)
+	container = ft_strdup("");
+	while (1)  //infinitely looping
 	{
-		bytes_read = read (fd, buffer, BUFFER_SIZE);
-		if (bytes_read <= 0)
-		{	
-			free (buffer);
-			return (NULL);
-		}
-		if (ft_strchr(buffer))
+		bytes_read = read (fd, buffer, BUFFER_SIZE); //read from fd to the buffer and count the bytes read
+		if (bytes_read <= 0) //checking if reading was unsuccessful
+			return (free (buffer), NULL);
+		container = ft_strjoin (container, buffer); //copy the initial buffer to a bigger buffer
+		if (ft_strchr(container)) //looking for \n
 		{
-			ptr = ft_strchr(buffer);
-			line = extracting_line (ptr);
-		//	&buffer[BUFFER_SIZE] + 1;
+			line = extracting_line ();
+			container + //number of characters extracted, in order to move the pointer
 			break;
 		}
 	}	

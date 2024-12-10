@@ -10,7 +10,60 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
-#include "stdlib.h"
+#include <stdlib.h>
+
+size_t	ft_strlen(char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
+char	*ft_strjoin(char *s1, char *s2)
+{
+	char	*str12;
+	char	*start;
+
+	str12 = malloc (ft_strlen(s1) + ft_strlen(s2) + 1);
+	if (!str12)
+		return (NULL);
+	start = str12;
+	while (*s1)
+	{
+		*str12 = *s1;
+		s1++;
+		str12++;
+	}
+	while (*s2)
+	{
+		*str12 = *s2;
+		s2++;
+		str12++;
+	}
+	*str12 = '\0';
+	return (start);
+}
+
+char	*ft_strdup(char *src)
+{
+	char	*dest;
+	int		i;
+
+	dest = malloc(ft_strlen(src) + 1);
+	if (dest == 0)
+		return (0);
+	i = 0;
+	while (src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
+}
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {
