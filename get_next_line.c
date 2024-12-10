@@ -48,32 +48,29 @@ char	*get_next_line(int fd)
 {	
 	static int	bytes_read;
 	char	*line;
-	char	buffer[BUFFER_SIZE * ((BUFFER_SIZE > 0) - (BUFFER_SIZE <= 0))];
+	char	*buffer;
 	int	i;
 	char	*ptr;
 
 	line = NULL;	
 	if (fd < 0 || read (fd, NULL, 0) != 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	*buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	buffer = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buffer)
-	{	
 		return (NULL);
-		free (buffer);
-	}
 	while (1)
 	{
 		bytes_read = read (fd, buffer, BUFFER_SIZE);
-		if (bytes_read < 0)
+		if (bytes_read <= 0)
 		{	
-			return (NULL);
 			free (buffer);
+			return (NULL);
 		}
-		if (ft_strchr(&buffer))
+		if (ft_strchr(buffer))
 		{
-			ptr = ft_strchr(&buffer);
-			line = extracting_line (&ptr);
-			&buffer[BUFFER_SIZE] + 1;
+			ptr = ft_strchr(buffer);
+			line = extracting_line (ptr);
+		//	&buffer[BUFFER_SIZE] + 1;
 			break;
 		}
 	}	
