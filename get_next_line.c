@@ -17,10 +17,10 @@ char	*ft_strchr(char *container)
 	int	i;
 
 	i = 0;
-	while (buffer[i])
+	while (container[i])
 	{
-		if (buffer[i] == '\n')
-			return (&buffer[i]);
+		if (container[i] == '\n')
+			return (&container[i]);
 		i++;
 	}
 	return (NULL);
@@ -29,21 +29,27 @@ char	*ft_strchr(char *container)
 char	*extracting_line (char *container)
 {
 	char	*line;
-	int	j;
 	int	i;
 
 	i = 0;
 	while (container[i] != '\n')
 		i++;
-	line = malloc(i + 2);
-	if (!line)
-		return (NULL);
-	while (buffer[i]) //create strndup or substring
-	{
-		line[i + j] = buffer[j];
+	line = ft_substr(container, 0, i);
+	return (line);
+}
+
+char	*update_container (char *container)
+{
+	char	*new_container;
+	int	i;
+	int	j;
+
+	while (container[i] != '\n')
+		i++;
+	while (container[j] != '\0')
 		j++;
-	}
-	return (&line[i]);
+	new_container = ft_substr(container, i++, j - i);
+	return (new_container);
 }
 
 char	*get_next_line(int fd)
@@ -68,8 +74,8 @@ char	*get_next_line(int fd)
 		container = ft_strjoin (container, buffer); //copy the initial buffer to a bigger buffer
 		if (ft_strchr(container)) //looking for \n
 		{
-			line = extracting_line ();
-			container + //number of characters extracted, in order to move the pointer
+			line = extracting_line (container);
+			container = update_container(container);
 			break;
 		}
 	}	
@@ -78,13 +84,18 @@ char	*get_next_line(int fd)
 
 int	main()
 {
+	char *str;
 	int	fd = open ("file.txt", O_RDONLY);
 	if (fd == -1) 
 	{
 		printf("Failed to open the file");
 		return (1);
 	}
-	printf ("%s", get_next_line(fd));
-	
+	str = get_next_line (fd);
+	while (str)
+	{
+		printf ("%s", get_next_line(fd));
+		str = get_next_line(fd);		
+	}
 	close (fd);
 }
