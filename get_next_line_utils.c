@@ -109,11 +109,10 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 
 	if (!s)
 		return (NULL);
-	substr = malloc(len + 2);
+	substr = malloc(len + 1);
 	if (!substr)
 		return (NULL);
 	ft_memcpy(substr, s + start, len);
 	substr[len] = '\0';
-	substr[len++] = '\n';
 	return (substr);
 }
