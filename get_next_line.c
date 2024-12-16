@@ -19,7 +19,7 @@ char	*ft_strchr(char *container)
 	i = 0;
 	while (container[i])
 	{
-		if (container[i] == '\n')
+		if (container[i] == '\n' )
 			return (&container[i]);
 		i++;
 	}
@@ -34,7 +34,7 @@ char	*extracting_line (char *container)
 	i = 0;
 	while (container[i] != '\n' && container[i] != '\0')
 		i++;
-	if (container[i] == '\n')
+	if (container[i] == '\n') //skip \n in order to add it to the line extracted
 		i++;
 	line = ft_substr(container, 0, i);
 	return (line);
@@ -69,6 +69,9 @@ char	*get_next_line(int fd)
 	char	*line;
 	char	*buffer;
 	static char	*container;
+	char	*temp;
+	char	*temp2;
+	char	*temp3;
 
 	line = NULL;	
 	if (fd < 0 || read (fd, NULL, 0) != 0 || BUFFER_SIZE <= 0)
@@ -83,25 +86,33 @@ char	*get_next_line(int fd)
 		if (ft_strchr(container)) // checking if container already has \n and no need to read
 		{
 			line = extracting_line (container);
-			container = update_container(container);
+			temp3 = update_container(container);
+			free(container);
+			container = temp3;
 			break;
 		}
 		bytes_read = read (fd, buffer, BUFFER_SIZE); //read from fd to the buffer and count the bytes read
 		if (bytes_read <= 0) //checking if reading was unsuccessful or EOF
 		{
-			free(buffer);
-			if (container)
+			if (*container)
 			{
 				line = extracting_line(container);
 				free(container);
+				container = NULL;
 			}
+			free(buffer);
 			return(line);
 		}
-		container = ft_strjoin (container, buffer); //copy the initial buffer to a bigger buffer
+		temp = ft_strjoin (container, buffer); //copy the initial buffer to a bigger buffer
+		free (container);
+		free(buffer);
+		container = temp;
 		if (ft_strchr(container)) //looking for \n
 		{
 			line = extracting_line (container);
-			container = update_container(container);
+			temp = update_container(container);
+			free(container);
+			container = temp;
 			break;
 		}		
 	}
@@ -112,6 +123,7 @@ char	*get_next_line(int fd)
 int	main()
 {
 	char *str;
+	char *temp;
 	int	fd = open ("file.txt", O_RDONLY);
 	if (fd == -1) 
 	{
@@ -122,7 +134,9 @@ int	main()
 	while (str)
 	{
 		printf("%s", str);  // Print the current line
-		str = get_next_line(fd);  // Get the next line		
+		temp = get_next_line(fd);  // Get the next line
+		free(str);
+		str = temp;
 	}
 	// printf ("%s", get_next_line(fd));
 	// printf ("%s", get_next_line(fd));
