@@ -9,7 +9,7 @@
 /*   Updated: 2024/12/02 17:23:58 by esteudle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "get_next_line.h"
+#include "gnl.h"
 #include <stdlib.h>
 
 size_t	ft_strlen(char *s)

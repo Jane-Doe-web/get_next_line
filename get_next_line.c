@@ -9,7 +9,7 @@
 /*   Updated: 2024/12/02 17:23:03 by esteudle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "get_next_line.h"
+
 #include <stdlib.h>
 
 char	*ft_strchr(char *container)
@@ -36,7 +36,7 @@ char	*extracting_line (char *container)
 		i++;
 	if (container[i] == '\n') //skip \n in order to add it to the line extracted
 		i++;
-	line = ft_substr(container, 0, i);
+	line = ft_substr(container, 0, i); //M3
 	return (line);
 }
 
@@ -57,10 +57,10 @@ char	*update_container (char *container)
 	}
 	i++; //skip '\n'
 	while (container[i + j] != '\0')
-        j++;
-    new_container = ft_substr(container, i, j);
-    free(container); // free old container as it's no longer needed
-    return (new_container);
+        	j++;
+	new_container = ft_substr(container, i, j); //M4
+	// free old container as it's no longer needed
+	return (free(container), container=NULL, new_container);
 }
 
 char	*get_next_line(int fd)
@@ -69,16 +69,13 @@ char	*get_next_line(int fd)
 	char	*line;
 	char	*buffer;
 	static char	*container;
-	char	*temp;
-	char	*temp2;
-	char	*temp3;
 
 	line = NULL;	
 	if (fd < 0 || read (fd, NULL, 0) != 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (!container)
-		container = ft_strdup("");
-	buffer = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char)); //allocate memory to the initial buffer
+		container = ft_strdup(""); //M1
+	buffer = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char)); //allocate memory to the initial buffer //M2
 	if (!buffer)   //malloc protection
 		return (NULL);
 	while (1)  //infinitely looping
@@ -86,38 +83,31 @@ char	*get_next_line(int fd)
 		if (ft_strchr(container)) // checking if container already has \n and no need to read
 		{
 			line = extracting_line (container);
-			temp3 = update_container(container);
-			free(container);
-			container = temp3;
+			container = update_container(container);
 			break;
 		}
 		bytes_read = read (fd, buffer, BUFFER_SIZE); //read from fd to the buffer and count the bytes read
 		if (bytes_read <= 0) //checking if reading was unsuccessful or EOF
 		{
+			if (bytes_read < 0)
+				return(NULL);
 			if (*container)
 			{
 				line = extracting_line(container);
 				free(container);
 				container = NULL;
 			}
-			free(buffer);
-			return(line);
+			return (free(buffer), line);
 		}
-		temp = ft_strjoin (container, buffer); //copy the initial buffer to a bigger buffer
-		free (container);
-		free(buffer);
-		container = temp;
+		container = ft_strjoin (container, buffer); //copy the initial buffer to a bigger buffer
 		if (ft_strchr(container)) //looking for \n
 		{
 			line = extracting_line (container);
-			temp = update_container(container);
-			free(container);
-			container = temp;
+			container = update_container(container);
 			break;
 		}		
 	}
-	free(buffer);	
-	return (line);
+	return (free(buffer), line);
 }
 
 int	main()
@@ -138,8 +128,5 @@ int	main()
 		free(str);
 		str = temp;
 	}
-	// printf ("%s", get_next_line(fd));
-	// printf ("%s", get_next_line(fd));
-	// printf ("%s", get_next_line(fd));
 	close (fd);
 }
