@@ -13,7 +13,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 10000
+#  define BUFFER_SIZE 100
 # endif
 
 #include <unistd.h>
@@ -25,8 +25,12 @@ char	*get_next_line(int fd);
 size_t	ft_strlen(char *s);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strdup(char *src);
-char	*ft_substr(char const *s, unsigned int start, size_t len);
+char	*ft_substr(char *s, unsigned int start, size_t len);
 void	*ft_calloc(size_t nmemb, size_t size);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
+char	*tackle_next_line (char **next_line, int fd);
+char	*extract_line(char *next_line);
+char	*update_next_line (char *next_line);
+char	*ft_strchr(char *container);
 
 #endif

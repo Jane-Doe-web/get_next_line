@@ -9,7 +9,7 @@
 /*   Updated: 2024/12/02 17:23:58 by esteudle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "gnl.h"
+#include "get_next_line.h"
 #include <stdlib.h>
 
 size_t	ft_strlen(char *s)
@@ -44,7 +44,6 @@ char	*ft_strjoin(char *s1, char *s2)
 		str12++;
 	}
 	*str12 = '\0';
-	free(s1);
 	return (start);
 }
 
@@ -104,7 +103,7 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 	return (dest);
 }
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
+char	*ft_substr(char *s, unsigned int start, size_t len)
 {
 	char	*substr;
 

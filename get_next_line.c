@@ -9,8 +9,71 @@
 /*   Updated: 2024/12/02 17:23:03 by esteudle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
+#include "get_next_line.h"
 #include <stdlib.h>
+
+char	*tackle_next_line(char **next_line, int fd)
+{
+	char	*buffer;
+	int	bytes_read;
+	char	*line;
+	char	*temp;
+
+	buffer = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	if (!buffer)
+		return (NULL);
+	bytes_read = 1;
+	while (!ft_strchr(*next_line) && bytes_read > 0)
+	{
+		bytes_read = read (fd, buffer, BUFFER_SIZE);
+		if (bytes_read < 0)
+			return (free(buffer), NULL);  // if read fails
+		if (bytes_read == 0)
+			break;
+		temp = ft_strjoin(*next_line, buffer);
+		free(*next_line);
+		*next_line = temp;
+	}
+	if (bytes_read == 0 && **next_line == '\0')
+		return(free(buffer), NULL); // If no more lines, return NULL
+	line = extract_line(*next_line);
+	*next_line = update_next_line(*next_line);
+	return (free(buffer), line);
+}
+
+char	*extract_line(char *next_line)
+{
+	char	*line;
+	int	i;
+
+	i = 0;
+	while (next_line[i] != '\n' && next_line[i] != '\0')
+		i++;
+	if (next_line[i] == '\n')
+		i++;
+	line = ft_substr(next_line, 0, i); 
+	return (line);
+}
+
+char	*update_next_line (char *next_line)
+{
+	char	*temp;
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (next_line[i] != '\n' && next_line[i] != '\0')
+		i++;
+	if (next_line[i] == '\0')
+		return(free(next_line), NULL);
+	i++; //skip '\n'
+	while (next_line[i + j] != '\0')
+		j++;
+	temp = ft_substr(next_line, i, j);
+	free(next_line); 
+	return (temp);
+}
 
 char	*ft_strchr(char *container)
 {
@@ -26,107 +89,21 @@ char	*ft_strchr(char *container)
 	return (NULL);
 }
 
-char	*extracting_line (char *container)
+char	*get_next_line (int fd)
 {
+	static char	*next_line;
 	char	*line;
-	int	i;
-
-	i = 0;
-	while (container[i] != '\n' && container[i] != '\0')
-		i++;
-	if (container[i] == '\n') //skip \n in order to add it to the line extracted
-		i++;
-	line = ft_substr(container, 0, i); //M3
-	return (line);
-}
-
-char	*update_container (char *container)
-{
-	char	*new_container;
-	int	i;
-	int	j;
-
-	i = 0;
-	j = 0;
-	while (container[i] != '\n' && container[i] != '\0')
-		i++;
-	if (container[i] == '\0')
-	{
-		free(container);
-		return (NULL);
-	}
-	i++; //skip '\n'
-	while (container[i + j] != '\0')
-        	j++;
-	new_container = ft_substr(container, i, j); //M4
-	// free old container as it's no longer needed
-	return (free(container), container=NULL, new_container);
-}
-
-char	*get_next_line(int fd)
-{	
-	int	bytes_read;
-	char	*line;
-	char	*buffer;
-	static char	*container;
 
 	line = NULL;	
 	if (fd < 0 || read (fd, NULL, 0) != 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (!container)
-		container = ft_strdup(""); //M1
-	buffer = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char)); //allocate memory to the initial buffer //M2
-	if (!buffer)   //malloc protection
-		return (NULL);
-	while (1)  //infinitely looping
+	if (!next_line)
+		next_line = ft_strdup(""); 
+	line = tackle_next_line (&next_line, fd);
+	if (line == NULL && next_line) 
 	{
-		if (ft_strchr(container)) // checking if container already has \n and no need to read
-		{
-			line = extracting_line (container);
-			container = update_container(container);
-			break;
-		}
-		bytes_read = read (fd, buffer, BUFFER_SIZE); //read from fd to the buffer and count the bytes read
-		if (bytes_read <= 0) //checking if reading was unsuccessful or EOF
-		{
-			if (bytes_read < 0)
-				return(NULL);
-			if (*container)
-			{
-				line = extracting_line(container);
-				free(container);
-				container = NULL;
-			}
-			return (free(buffer), line);
-		}
-		container = ft_strjoin (container, buffer); //copy the initial buffer to a bigger buffer
-		if (ft_strchr(container)) //looking for \n
-		{
-			line = extracting_line (container);
-			container = update_container(container);
-			break;
-		}		
+		free(next_line);
+		next_line = NULL;  // Optionally set it to NULL to avoid dangling pointer
 	}
-	return (free(buffer), line);
-}
-
-int	main()
-{
-	char *str;
-	char *temp;
-	int	fd = open ("file.txt", O_RDONLY);
-	if (fd == -1) 
-	{
-		printf("Failed to open the file");
-		return (1);
-	}
-	str = get_next_line (fd);
-	while (str)
-	{
-		printf("%s", str);  // Print the current line
-		temp = get_next_line(fd);  // Get the next line
-		free(str);
-		str = temp;
-	}
-	close (fd);
+	return (line);
 }
