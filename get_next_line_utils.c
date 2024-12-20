@@ -6,7 +6,7 @@
 /*   By: esteudle <esteudle@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 17:23:55 by esteudle          #+#    #+#             */
-/*   Updated: 2024/12/02 17:23:58 by esteudle         ###   ########.fr       */
+/*   Updated: 2024/12/20 14:46:41 by esteudle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -84,35 +84,22 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (ptr);
 }
 
-void	*ft_memcpy(void *dest, const void *src, size_t n)
-{
-	unsigned char	*d;
-	unsigned char	*s;
-	size_t			i;
-
-	if (dest == NULL && src == NULL)
-		return (NULL);
-	d = (unsigned char *)dest;
-	s = (unsigned char *)src;
-	i = 0;
-	while (i < n)
-	{
-		d[i] = s[i];
-		i++;
-	}
-	return (dest);
-}
-
 char	*ft_substr(char *s, unsigned int start, size_t len)
 {
 	char	*substr;
+	size_t	i;
 
 	if (!s)
 		return (NULL);
 	substr = malloc(len + 1);
 	if (!substr)
 		return (NULL);
-	ft_memcpy(substr, s + start, len);
-	substr[len] = '\0';
+	i = 0;
+	while (i < len)
+	{
+		substr[i] = s[start + i];
+		i++;
+	}
+	substr[i] = '\0';
 	return (substr);
 }

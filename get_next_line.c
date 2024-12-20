@@ -6,7 +6,7 @@
 /*   By: esteudle <esteudle@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 17:22:59 by esteudle          #+#    #+#             */
-/*   Updated: 2024/12/02 17:23:03 by esteudle         ###   ########.fr       */
+/*   Updated: 2024/12/20 14:18:54 by esteudle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -15,36 +15,35 @@
 char	*tackle_next_line(char **next_line, int fd)
 {
 	char	*buffer;
-	int	bytes_read;
+	int		bytes_read;
 	char	*line;
 	char	*temp;
 
-	buffer = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	if (!buffer)
-		return (NULL);
 	bytes_read = 1;
 	while (!ft_strchr(*next_line) && bytes_read > 0)
 	{
+		buffer = (char *)ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+		if (!buffer)
+			return (NULL);
 		bytes_read = read (fd, buffer, BUFFER_SIZE);
 		if (bytes_read < 0)
-			return (free(buffer), NULL);  // if read fails
-		if (bytes_read == 0)
-			break;
+			return (free(buffer), NULL);
 		temp = ft_strjoin(*next_line, buffer);
 		free(*next_line);
 		*next_line = temp;
+		free(buffer);
 	}
 	if (bytes_read == 0 && **next_line == '\0')
-		return(free(buffer), NULL); // If no more lines, return NULL
+		return (NULL);
 	line = extract_line(*next_line);
 	*next_line = update_next_line(*next_line);
-	return (free(buffer), line);
+	return (line);
 }
 
 char	*extract_line(char *next_line)
 {
 	char	*line;
-	int	i;
+	int		i;
 
 	i = 0;
 	while (next_line[i] != '\n' && next_line[i] != '\0')
@@ -55,19 +54,19 @@ char	*extract_line(char *next_line)
 	return (line);
 }
 
-char	*update_next_line (char *next_line)
+char	*update_next_line(char *next_line)
 {
 	char	*temp;
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 
 	i = 0;
 	j = 0;
 	while (next_line[i] != '\n' && next_line[i] != '\0')
 		i++;
 	if (next_line[i] == '\0')
-		return(free(next_line), NULL);
-	i++; //skip '\n'
+		return (free(next_line), NULL);
+	i++;
 	while (next_line[i + j] != '\0')
 		j++;
 	temp = ft_substr(next_line, i, j);
@@ -89,12 +88,12 @@ char	*ft_strchr(char *container)
 	return (NULL);
 }
 
-char	*get_next_line (int fd)
+char	*get_next_line(int fd)
 {
 	static char	*next_line;
-	char	*line;
+	char		*line;
 
-	line = NULL;	
+	line = NULL;
 	if (fd < 0 || read (fd, NULL, 0) != 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (!next_line)
@@ -103,7 +102,7 @@ char	*get_next_line (int fd)
 	if (line == NULL && next_line) 
 	{
 		free(next_line);
-		next_line = NULL;  // Optionally set it to NULL to avoid dangling pointer
+		next_line = NULL;
 	}
 	return (line);
 }
